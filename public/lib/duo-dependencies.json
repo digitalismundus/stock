@@ -1,0 +1,14 @@
+[
+  {
+    "package": "duosecurity/duo_universal_php",
+    "version": "1.2.0",
+    "source": "https://api.github.com/repos/duosecurity/duo_universal_php/zipball/7045587e8a0a850355ed55f019090a033e49b29a",
+    "archiveSHA256": "e32d73f7f82f59b0ab2e911ddb50887e96cf051df5f9bf9e8a57f2e2722bd9af"
+  },
+  {
+    "package": "firebase/php-jwt",
+    "version": "7.2.1",
+    "source": "https://api.github.com/repos/googleapis/php-jwt/zipball/0501f5729b9e2448516674aff07c7d1727869b8e",
+    "archiveSHA256": "22aac93a4ef3d44eac8c97880937b495d8a9af30b3e3c2930f05c4ee53c16c02"
+  }
+]

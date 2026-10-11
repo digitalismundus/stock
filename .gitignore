@@ -1,0 +1,15 @@
+storage/
+config.php
+*.zip
+test-results/
+.DS_Store
+
+private-deploy/
+DOSTEP-STOCK.txt
+
+__pycache__/
+*.pyc
+.env
+.env.*
+*.sqlite
+*.sqlite-*

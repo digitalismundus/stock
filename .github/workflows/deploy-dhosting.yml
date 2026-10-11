@@ -1,0 +1,52 @@
+name: STOCK — dhosting
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/**'
+      - 'scripts/ftp_stock.py'
+      - 'scripts/deploy_stock.py'
+      - 'scripts/deploy_audit.py'
+      - 'tests/**'
+      - '.github/workflows/deploy-dhosting.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stock-dhosting
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Check calculation regressions
+        run: node --test tests/core.test.cjs tests/analysis.test.cjs tests/fx.test.cjs tests/history.test.cjs
+      - name: Check PHP syntax and backend rules
+        run: |
+          find public -name '*.php' -print0 | xargs -0 -n1 php -l
+          php tests/duo_test.php
+          php tests/research_test.php
+          php tests/recommendations_test.php
+          php tests/fx_test.php
+          php tests/backend_validation_test.php
+      - name: Check backup protection and interrupted deployment recovery
+        run: |
+          python3 tests/deploy_stock_test.py
+          python3 tests/deploy_audit_test.py
+      - name: Validate public deployment package
+        run: python3 scripts/deploy_stock.py --check
+      - name: Publish audited application through encrypted FTP
+        env:
+          STOCK_FTP_HOST: ${{ vars.STOCK_FTP_HOST || 'makarecki.ftp.dhosting.pl' }}
+          STOCK_FTP_PORT: ${{ vars.STOCK_FTP_PORT || '21' }}
+          STOCK_FTP_USER: ${{ secrets.STOCK_FTP_USER }}
+          STOCK_FTP_PASSWORD: ${{ secrets.STOCK_FTP_PASSWORD }}
+        run: python3 scripts/deploy_audit.py
